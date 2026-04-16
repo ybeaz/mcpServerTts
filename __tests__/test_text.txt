@@ -1,0 +1,1 @@
+This idea shows how one embedded element can serve several functions at the same time.
