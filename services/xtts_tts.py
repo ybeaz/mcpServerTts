@@ -34,7 +34,7 @@ def _get_xtts_model():
     return _xtts_model
 
 
-def xttsTts(
+def xtts_tts(
     text: str,
     output_file: str,
     speaker_wav: str,

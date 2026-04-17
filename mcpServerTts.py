@@ -18,9 +18,9 @@ from ttstokenizer import IPATokenizer
 from TTS.tts.configs.xtts_config import XttsConfig
 from TTS.tts.models.xtts import Xtts
 
-from services.piperTts import piperTts, VOICES_PIPER
-from services.kokoroTts import kokoroTts, KOKORO_VOICES
-from services.xttsTts import xttsTts
+from services.piper_tts import piper_tts, VOICES_PIPER
+from services.kokoro_tts import kokoro_tts, KOKORO_VOICES
+from services.xtts_tts import xtts_tts
 
 mcp: FastMCP = FastMCP("TTS MCP Server")
 
@@ -45,14 +45,14 @@ def tool_tts(
 
     if voice in VOICES_PIPER:
         # print(f"VOICES_PIPER: {voice}")
-        path = piperTts(text, voice, output_file=output_file_next)
+        path = piper_tts(text, voice, output_file=output_file_next, speed=speed)
 
     elif voice in KOKORO_VOICES:
         # print(f"KOKORO_VOICES: {voice}")
-        path = kokoroTts(text, voice, output_file=output_file_next, speed=speed)
+        path = kokoro_tts(text, voice, output_file=output_file_next, speed=speed)
 
     else:
-        path = xttsTts(
+        path = xtts_tts(
             text,
             output_file=output_file_next,
             speaker_wav=SPEAKER_WAV,
@@ -99,7 +99,7 @@ if __name__ == "__main__":
     if len(sys.argv) > 1 and sys.argv[1] == "test_piper":
         start = time.perf_counter()
 
-        output = piperTts(text=TEXT, voice=VOICE, output_file=OUTPUT_FILE)
+        output = piper_tts(text=TEXT, voice=VOICE, output_file=OUTPUT_FILE)
 
         end = time.perf_counter()
         duration = end - start
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     elif len(sys.argv) > 1 and sys.argv[1] == "test_kokoro":
         start = time.perf_counter()
 
-        output = kokoroTts(text=TEXT, voice=VOICE, output_file=OUTPUT_FILE, speed=1.0)
+        output = kokoro_tts(text=TEXT, voice=VOICE, output_file=OUTPUT_FILE, speed=1.0)
 
         end = time.perf_counter()
         duration = end - start
@@ -123,7 +123,7 @@ if __name__ == "__main__":
 
         start = time.perf_counter()
 
-        output = xttsTts(
+        output = xtts_tts(
             text=TEXT,
             output_file=OUTPUT_FILE,
             speaker_wav=SPEAKER_WAV,

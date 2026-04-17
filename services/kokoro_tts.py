@@ -21,7 +21,7 @@ _kokoro_tokenizer = IPATokenizer()
 KOKORO_VOICES = set(_kokoro_voices.keys())  # "af", "af_bella", "am_adam", …
 
 
-def kokoroTts(text: str, voice: str, output_file: str, speed: float = 1.0) -> str:
+def kokoro_tts(text: str, voice: str, output_file: str, speed: float = 1.0) -> str:
     inputs = _kokoro_tokenizer(text)
     speaker = np.array(_kokoro_voices[voice], dtype=np.float32)
 
