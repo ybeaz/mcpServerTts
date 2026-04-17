@@ -51,5 +51,7 @@ archive/
 
 # Media / generated assets
 2026-06-01-Remove_piper-mcp-env/
+assets/
 scenarios/**/*.png
 **/*.wav
+**/*.m4a
