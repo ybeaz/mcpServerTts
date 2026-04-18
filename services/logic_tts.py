@@ -1,58 +1,36 @@
-"""
-This module provides a FastMCP server for Piper TTS.
-"""
-
-from pprint import pprint
 from pathlib import Path
-import json
 import time
-from pydoc import text
-import wave
-from fastmcp import FastMCP
-from piper.voice import PiperVoice
-
-import numpy as np
-import onnxruntime
-import soundfile as sf
-from ttstokenizer import IPATokenizer
-from TTS.tts.configs.xtts_config import XttsConfig
-from TTS.tts.models.xtts import Xtts
 
 from services.piper_tts import piper_tts, VOICES_PIPER
 from services.kokoro_tts import kokoro_tts, KOKORO_VOICES
 from services.xtts_tts import xtts_tts
 
-mcp: FastMCP = FastMCP("TTS MCP Server")
 
-
-@mcp.tool()
-def tool_tts(
+def logic_tts(
     text: str,
     voice: str = "en_US-amy-medium",
-    output_file: str = "output.wav",
+    output_file: str = "./__output__/output.wav",
     speed: float = 1.0,
 ) -> str:
-
     SPEAKER_WAV = "./references/reference_chrp_3.wav"
-    OUTPUT_DIR = Path("__output__")
+
+    file_path = Path(output_file)
+    OUTPUT_DIR = file_path.parent
 
     OUTPUT_DIR.mkdir(exist_ok=True)
 
-    output_file_next = str(OUTPUT_DIR / output_file)
-    path = ""
-
-    print("mcpServerTts [200] 🔥 MCP CALL RECEIVED:", text)
+    output_file_next = str(output_file)
 
     if voice in VOICES_PIPER:
         # print(f"VOICES_PIPER: {voice}")
-        path = piper_tts(text, voice, output_file=output_file_next, speed=speed)
+        return piper_tts(text, voice, output_file=output_file_next, speed=speed)
 
     elif voice in KOKORO_VOICES:
         # print(f"KOKORO_VOICES: {voice}")
-        path = kokoro_tts(text, voice, output_file=output_file_next, speed=speed)
+        return kokoro_tts(text, voice, output_file=output_file_next, speed=speed)
 
     else:
-        path = xtts_tts(
+        return xtts_tts(
             text,
             output_file=output_file_next,
             speaker_wav=SPEAKER_WAV,
@@ -60,13 +38,6 @@ def tool_tts(
             speed=speed,
         )
 
-    return f"Audio saved to {path}"
-
-
-"""
-# To upload kokoro_assets
-Browser > `https://github.com/thewh1teagle/kokoro-onnx/releases/tag/model-files` > download manually
-"""
 
 if __name__ == "__main__":
     """
@@ -136,5 +107,3 @@ if __name__ == "__main__":
         print(
             f"✅ Saved to {output}. lext: {text_len}. Execution time: {duration:.6f} seconds. Speed: {duration/text_len}"
         )
-    else:
-        mcp.run(transport="sse", port=4001, host="127.0.0.1")
