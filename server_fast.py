@@ -32,7 +32,7 @@ def tool_tts(
     text: str,
     voice: str = DEFAULT_VOICE,
     output_file: str = DEFAULT_OUTPUT_FILE,
-    speed: float = 1.0,  # Field(default=1.0, ge=0.5, le=2.0),
+    speed: float = Field(default=DEFAULT_SPEED, ge=0.5, le=2.0),
 ) -> dict:
 
     logger.info(
@@ -47,22 +47,22 @@ def tool_tts(
         return {"error": str(e)}
 
 
-# @app.post("/tts")
-# def http_tts(req: TTSRequest):
+@app.post("/tts")
+def http_tts(req: TTSRequest):
 
-#     logger.info(
-#         "TTS request",
-#         extra={"voice": req.voice, "text_length": len(req.text), "source": "rest"},
-#     )
+    logger.info(
+        "TTS request",
+        extra={"voice": req.voice, "text_length": len(req.text), "source": "rest"},
+    )
 
-#     try:
-#         path = logic_tts(req.text, req.voice, req.output_file, req.speed)
-#         return {"path": path}
+    try:
+        path = logic_tts(req.text, req.voice, req.output_file, req.speed)
+        return {"path": path}
 
-#     except ValueError as e:
-#         raise HTTPException(status_code=400, detail=str(e))
-#     except Exception as e:
-#         raise HTTPException(status_code=500, detail="Internal TTS error")
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Internal TTS error")
 
 
 """

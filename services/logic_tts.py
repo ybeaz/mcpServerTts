@@ -4,13 +4,14 @@ import time
 from services.piper_tts import piper_tts, VOICES_PIPER
 from services.kokoro_tts import kokoro_tts, KOKORO_VOICES
 from services.xtts_tts import xtts_tts
+from services.defaults_tts import DEFAULT_VOICE, DEFAULT_OUTPUT_FILE, DEFAULT_SPEED
 
 
 def logic_tts(
     text: str,
-    voice: str = "en_US-amy-medium",
-    output_file: str = "./__output__/output.wav",
-    speed: float = 1.0,
+    voice: str = DEFAULT_VOICE,
+    output_file: str = DEFAULT_OUTPUT_FILE,
+    speed: float = DEFAULT_SPEED,
 ) -> str:
     SPEAKER_WAV = "./references/reference_chrp_3.wav"
 
@@ -22,11 +23,9 @@ def logic_tts(
     output_file_next = str(output_file)
 
     if voice in VOICES_PIPER:
-        # print(f"VOICES_PIPER: {voice}")
         return piper_tts(text, voice, output_file=output_file_next, speed=speed)
 
     elif voice in KOKORO_VOICES:
-        # print(f"KOKORO_VOICES: {voice}")
         return kokoro_tts(text, voice, output_file=output_file_next, speed=speed)
 
     else:
