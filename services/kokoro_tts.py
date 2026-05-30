@@ -5,7 +5,10 @@ import numpy as np
 import onnxruntime
 from ttstokenizer import IPATokenizer
 import soundfile as sf
+import time
+import threading
 
+_lock = threading.Lock()
 
 KOKORO_MODEL_PATH = "./assets/kokoro/kokoro-v0_19.onnx"
 KOKORO_VOICES_PATH = "./assets/kokoro/voices.json"
@@ -25,17 +28,26 @@ def kokoro_tts(text: str, voice: str, output_file: str, speed: float = 1.0) -> s
     inputs = _kokoro_tokenizer(text)
     speaker = np.array(_kokoro_voices[voice], dtype=np.float32)
 
-    outputs = _kokoro_model.run(
-        None,
-        {
-            "tokens": [[0, *inputs, 0]],
-            "style": speaker[len(inputs)],
-            "speed": np.ones(1, dtype=np.float32) * speed,
-        },
-    )
+    idx = min(len(inputs), len(speaker) - 1)
 
-    sf.write(output_file, outputs[0], 24000)
-    return output_file
+    with _lock:  # 🔥 critical fix
+        outputs = _kokoro_model.run(
+            None,
+            {
+                "tokens": [[0, *inputs, 0]],
+                "style": speaker[idx],
+                "speed": np.ones(1, dtype=np.float32) * speed,
+            },
+        )
+
+    try:
+        sf.write(output_file, outputs[0], 24000)
+        time.sleep(0.05)  # keep small, just for safety
+        return output_file
+
+    except Exception as e:
+        PRINT(e, comment("kokoro_tts WRITE ERROR"))
+        raise
 
 
 if __name__ == "__main__":

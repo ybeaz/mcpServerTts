@@ -1,0 +1,13 @@
+{
+  "folders": [
+    {
+      "path": "."
+    },
+    {
+      "path": "../manuals/."
+    },
+    {
+      "path": "node_modules/yourails_common/."
+    }
+  ]
+}
